@@ -1,0 +1,25 @@
+{
+  "name": "student-expense-dashboard",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/riyazhussainy/student-expense-dashboard.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/riyazhussainy/student-expense-dashboard/issues"
+  },
+  "homepage": "https://github.com/riyazhussainy/student-expense-dashboard#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
