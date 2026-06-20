@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Daily Expense Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen">
+
+    <header class="bg-indigo-600 text-white shadow-lg">
+        <div class="w-full max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center">
+            <h1 class="text-2xl md:text-3xl font-bold tracking-tight">Student Expense Dashboard</h1>
+            <div class="mt-4 md:mt-0 text-right">
+                <p class="text-indigo-200 text-sm">Monthly Budget</p>
+                <p class="text-2xl font-bold" id="headerBudget">₹0.00</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="w-full max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Left Column: Forms -->
+        <div class="lg:col-span-1 space-y-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h2 class="text-lg font-semibold mb-4 text-indigo-700">Set Monthly Budget</h2>
+                <div class="flex gap-2">
+                    <input type="number" id="budgetInput" placeholder="Enter amount" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                    <button onclick="setBudget()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">Set</button>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h2 class="text-lg font-semibold mb-4 text-indigo-700" id="formTitle">Add Expense</h2>
+                <form id="expenseForm" class="space-y-4">
+                    <input type="hidden" id="editId">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-600 mb-1">Amount (₹)</label>
+                        <input type="number" id="amount" step="0.01" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-600 mb-1">Category</label>
+                        <select id="category" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                            <option value="Food">Food</option>
+                            <option value="Transport">Transport</option>
+                            <option value="Study">Study</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-600 mb-1">Date</label>
+                        <input type="date" id="date" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-600 mb-1">Notes</label>
+                        <input type="text" id="notes" placeholder="Optional notes" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                    <div class="flex gap-2 pt-2">
+                        <button type="submit" class="flex-1 bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition font-medium" id="submitBtn">Add Expense</button>
+                        <button type="button" onclick="resetForm()" class="px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 transition hidden" id="cancelBtn">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right Column: Summary, Chart & List -->
+        <div class="lg:col-span-2 space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                    <p class="text-sm text-slate-500 font-medium">Total Spent</p>
+                    <p class="text-2xl font-bold text-red-600 mt-1" id="totalSpent">₹0.00</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                    <p class="text-sm text-slate-500 font-medium">Remaining</p>
+                    <p class="text-2xl font-bold text-emerald-600 mt-1" id="remainingBudget">₹0.00</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                    <p class="text-sm text-slate-500 font-medium">Transactions</p>
+                    <p class="text-2xl font-bold text-indigo-600 mt-1" id="totalCount">0</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h2 class="text-lg font-semibold mb-4 text-indigo-700">Spending by Category</h2>
+                <div class="relative h-64 w-full flex justify-center">
+                    <canvas id="expenseChart"></canvas>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-6 border-b border-slate-200">
+                    <h2 class="text-lg font-semibold text-indigo-700">Recent Expenses</h2>
+                </div>
+                <div class="overflow-y-auto max-h-96 custom-scroll p-6">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="sticky top-0 bg-white">
+                            <tr class="text-sm text-slate-500 border-b border-slate-200">
+                                <th class="pb-3 font-medium">Date</th>
+                                <th class="pb-3 font-medium">Category</th>
+                                <th class="pb-3 font-medium">Notes</th>
+                                <th class="pb-3 font-medium text-right">Amount (₹)</th>
+                                <th class="pb-3 font-medium text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expenseList" class="text-sm text-slate-700"></tbody>
+                    </table>
+                    <p id="emptyState" class="text-center text-slate-400 py-8 hidden">No expenses recorded yet.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
