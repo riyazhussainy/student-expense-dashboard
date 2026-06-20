@@ -1,11 +1,9 @@
 {
   "name": "student-expense-dashboard",
   "version": "1.0.0",
-  "description": "",
-  "main": "script.js",
+  "description": "Student Daily Expense Dashboard",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -14,12 +12,5 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/riyazhussainy/student-expense-dashboard/issues"
-  },
-  "homepage": "https://github.com/riyazhussainy/student-expense-dashboard#readme",
-  "dependencies": {
-    "express": "^5.2.1"
-  }
+  "dependencies": {}
 }
